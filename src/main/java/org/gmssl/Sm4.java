@@ -17,6 +17,7 @@ public class Sm4 {
 
 	private static final String PARAMETER_ERROR = "参数错误";
 
+	/*类初始化gmssl对象，调用jni接口*/
 	private static final GmSSL gmssl = new GmSSL();
 
 
@@ -170,7 +171,15 @@ public class Sm4 {
 		return gmssl.symmetricDecrypt(cipher, in, key, iv);
 	}
 
+
+
+
+
+
+
+
 	/**
+	 * 单元测试
 	 * http://gmssl.org/docs/sm4.html
 	 * @param args
 	 */
