@@ -181,7 +181,7 @@ public class Sm4 {
 	/**
 	 * 单元测试
 	 * http://gmssl.org/docs/sm4.html
-	 * @param args
+	 * @param args String[]
 	 */
 	public static void main(String[] args) {
 
