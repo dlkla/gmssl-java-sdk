@@ -8,20 +8,20 @@ public class Sm2 {
     private static final GmSSL gmssl = new GmSSL();
 
     /*默认对称加密算法*/
-    private static String DEFAULT_SYMMETRIC_ALG = "sms4-cbc";
+    private static final String DEFAULT_SYMMETRIC_ALG = "sms4-cbc";
 
     /*sm2加密算法*/
-    private static String SM2_ENCRYPT_ALG = "sm2encrypt-with-sm3";
+    private static final String SM2_ENCRYPT_ALG = "sm2encrypt-with-sm3";
 
     /*sm2签名算法*/
-    private static String SM2_SIGN_ALG = "sm2sign";
+    private static final String SM2_SIGN_ALG = "sm2sign";
 
 
     /**
      * 产生PEM格式私钥
      * @param algor String 对称算法
      * @param passPhrase String 密钥,可以为null
-     * @return
+     * @return String
      */
     public static String generatePEMPriKey(String algor, String passPhrase) {
         if (algor == null) {
@@ -29,7 +29,7 @@ public class Sm2 {
         }
         String tempPriKey = gmssl.generatePEMPriKey(algor, passPhrase);
         // passPhrase = null时, 最后部分有字节乱码
-        String pemPrikey = tempPriKey.substring(0,tempPriKey.lastIndexOf("-")+1) + "\n";
+        String pemPrikey = tempPriKey.substring(0,tempPriKey.lastIndexOf("-----") + 5) + "\n";
         return pemPrikey;
     }
 
@@ -45,7 +45,7 @@ public class Sm2 {
         }
         String tempPubKey =  gmssl.getPEMPubKey(algor, passPhrase);
         // passPhrase = null时, 最后部分有字节乱码
-        String pemPubKey = tempPubKey.substring(0,tempPubKey.lastIndexOf("-")+1) + "\n";
+        String pemPubKey = tempPubKey.substring(0,tempPubKey.lastIndexOf("-----") + 5) + "\n";
         return pemPubKey;
     }
 
@@ -126,7 +126,7 @@ public class Sm2 {
 
     public static void main(String[] args) {
 
-        String passPhrase = null;
+        String passPhrase = "123456";
         // 产生私钥
         String pemPriKey = Sm2.generatePEMPriKey(DEFAULT_SYMMETRIC_ALG, passPhrase);
         System.out.println("sm2私钥:\n" + pemPriKey);
