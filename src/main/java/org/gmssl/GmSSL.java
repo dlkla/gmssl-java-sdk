@@ -68,11 +68,18 @@ public class GmSSL {
 	public native byte[] digest(String algor, byte[] data);
 	public native String[] getMacLength(String algor);
 	public native byte[] mac(String algor, byte[] data, byte[] key);
-	/*产sm2私钥*/
+	/*产生sm2私钥,仅支持sm2*/
 	public native byte[] generatePrivateKey();
 	/*根据sm2私钥获取sm2公钥*/
 	public native byte[] getPublicKey(byte[] privateKey);
-
+	/*产生PEM格式私钥,algor暂时仅支持sm2*/
+	public native String generatePEMPriKey(String algor,String phrasePass);
+	/*根据sm2私钥获取sm2 PEM格式公钥*/
+	public native String getPEMPubKey(String pemPriKey,String phrasePass);
+	/*将PEM格式私钥转成二进制数组,没有密钥加密时传入null*/
+	public native byte[] transPriPemToByteArr(String pem,String phrasePass);
+	/*将PEM格式公钥转成二进制数组*/
+	public native byte[] transPubPemToByteArr(String pubPem);
 	public native byte[] sign(String algor, byte[] data, byte[] privateKey);
 	public native int verify(String algor, byte[] digest, byte[] signature, byte[] publicKey);
 	public native byte[] publicKeyEncrypt(String algor, byte[] in, byte[] publicKey);
@@ -178,7 +185,7 @@ public class GmSSL {
 		}
 		System.out.println("");
 
-		byte[] sm2PrivateKey = gmssl.generatePrivateKey()/*new byte[] {
+		byte[] sm2PrivateKey = new byte[] {
 		(byte)0x30,(byte)0x77,(byte)0x02,(byte)0x01,(byte)0x01,(byte)0x04,(byte)0x20,(byte)0x28,
 		(byte)0x7d,(byte)0x3f,(byte)0xb9,(byte)0xf4,(byte)0xbb,(byte)0xc8,(byte)0xbd,(byte)0xe1,
 		(byte)0x54,(byte)0x75,(byte)0x87,(byte)0x9f,(byte)0x08,(byte)0x61,(byte)0x20,(byte)0xe3,
@@ -194,9 +201,9 @@ public class GmSSL {
 		(byte)0x78,(byte)0x29,(byte)0x87,(byte)0xdc,(byte)0x74,(byte)0x07,(byte)0x75,(byte)0xd0,
 		(byte)0x68,(byte)0xad,(byte)0x85,(byte)0x71,(byte)0x08,(byte)0xc2,(byte)0x19,(byte)0xf0,
 		(byte)0xf4,(byte)0xca,(byte)0x6e,(byte)0xe1,(byte)0xea,(byte)0x86,(byte)0xe6,(byte)0x21,
-		(byte)0x76}*/;
+		(byte)0x76};
 
-		byte[] sm2PublicKey = gmssl.getPublicKey(sm2PrivateKey)/*new byte[] {
+		byte[] sm2PublicKey = new byte[] {
 		(byte)0x30,(byte)0x59,(byte)0x30,(byte)0x13,(byte)0x06,(byte)0x07,(byte)0x2a,(byte)0x86,
 		(byte)0x48,(byte)0xce,(byte)0x3d,(byte)0x02,(byte)0x01,(byte)0x06,(byte)0x08,(byte)0x2a,
 		(byte)0x81,(byte)0x1c,(byte)0xcf,(byte)0x55,(byte)0x01,(byte)0x82,(byte)0x2d,(byte)0x03,
@@ -208,7 +215,7 @@ public class GmSSL {
 		(byte)0xab,(byte)0x45,(byte)0x78,(byte)0x29,(byte)0x87,(byte)0xdc,(byte)0x74,(byte)0x07,
 		(byte)0x75,(byte)0xd0,(byte)0x68,(byte)0xad,(byte)0x85,(byte)0x71,(byte)0x08,(byte)0xc2,
 		(byte)0x19,(byte)0xf0,(byte)0xf4,(byte)0xca,(byte)0x6e,(byte)0xe1,(byte)0xea,(byte)0x86,
-		(byte)0xe6,(byte)0x21,(byte)0x76}*/;
+		(byte)0xe6,(byte)0x21,(byte)0x76};
 
 		byte[] sig = gmssl.sign("sm2sign", dgst, sm2PrivateKey);
 		System.out.print("SM2 Signature : ");
