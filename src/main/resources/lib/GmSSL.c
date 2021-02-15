@@ -1773,44 +1773,45 @@ return ret;
 
 
 JNIEXPORT jbyteArray JNICALL Java_org_gmssl_GmSSL_getPublicKey(JNIEnv *env, jobject this, jbyteArray privateKey) {
-	jbyteArray ret = NULL;
-	unsigned char *outbuf = NULL;
-	const unsigned char *keybuf = NULL;
-	int keylen;
-	EVP_PKEY *pkey = NULL;
 
-	if (!(keybuf = (unsigned char*)(*env)->GetByteArrayElements(env, privateKey, 0))) {
-		printf("GetByteArrayElements error \r\n");
-		goto end;
-	}
-	if ((keylen = (*env)->GetArrayLength(env, privateKey)) <= 0) {
-		printf("GetArrayLength error \r\n");
-		goto end;
-	}
+jbyteArray ret = NULL;
+unsigned char *outbuf = NULL;
+const unsigned char *keybuf = NULL;
+int keylen;
+EVP_PKEY *pkey = NULL;
 
-	if (!(pkey = d2i_PrivateKey(EVP_PKEY_EC, NULL, &keybuf, (long)keylen))) {
-		printf("d2i_PrivateKey error");
-		goto end;
-	}
+if (!(keybuf = (unsigned char*)(*env)->GetByteArrayElements(env, privateKey, 0))) {
+    printf("GetByteArrayElements error\n");
+    goto end;
+}
 
-	int outlen;
-	if (!(outlen=i2d_PUBKEY(pkey,&outbuf))) {
-		printf("EVP_PKEY_print_public error");
-		goto end;
-	}
+if ((keylen = (*env)->GetArrayLength(env, privateKey)) <= 0) {
+    printf("GetArrayLength error\n");
+    goto end;
+}
 
-	if (!(ret = (*env)->NewByteArray(env, outlen))) {
-		goto end;
-	}
-	
-	(*env)->SetByteArrayRegion(env, ret, 0, outlen, (jbyte *) outbuf);
+if (!(pkey = d2i_PrivateKey(EVP_PKEY_EC, NULL, &keybuf, (long)keylen))) {
+    printf("d2i_PrivateKey error\n");
+    goto end;
+}
+
+int outlen;
+if (!(outlen=i2d_PUBKEY(pkey,&outbuf))) {
+    printf("EVP_PKEY_print_public error\n");
+    goto end;
+}
+
+if (!(ret = (*env)->NewByteArray(env, outlen))) {
+    printf("return jbyteArray error\n");
+    goto end;
+}
+
+(*env)->SetByteArrayRegion(env, ret, 0, outlen, (jbyte *) outbuf);
 
 end:
-	
-	if (keybuf) 
-	if (pkey) EVP_PKEY_free(pkey);
-	
-	return ret;
+if (keybuf)
+if (pkey) EVP_PKEY_free(pkey);
+return ret;
 
 }
 
@@ -1888,7 +1889,7 @@ if (!PEM_write_bio_PrivateKey(bio, key, cipher, NULL, 0, NULL, pass)) {
 BIO_get_mem_data(bio, &outbuf);
 
 if (!(ret = (*env)->NewStringUTF(env, outbuf))) {
-	printf("Error return jstring");
+	printf("Error return jstring\n");
 	goto end;
 }
 
@@ -1905,161 +1906,163 @@ return ret;
 }
 
 JNIEXPORT jstring JNICALL Java_org_gmssl_GmSSL_getPEMPubKey(JNIEnv *env, jobject this, jstring pemPriKey, jstring password) {
-	jstring ret = NULL;
-	char *outbuf = NULL;
-	const char *keybuf = NULL;
-	char * pass = NULL;
-	EVP_PKEY *pkey = NULL;
 
-	if (!(keybuf = (*env)->GetStringUTFChars(env, pemPriKey, 0))) {
-		printf("get pemPrikey error \n");
-		goto end;
-	}
-	
-	BIO *priKeyBio = NULL;
-	
-	priKeyBio = BIO_new_mem_buf(keybuf,-1);
+jstring ret = NULL;
+char *outbuf = NULL;
+const char *keybuf = NULL;
+char * pass = NULL;
+EVP_PKEY *pkey = NULL;
 
-	if (priKeyBio == NULL) {
-		printf("turn pemPrikey into BIO error \n");
-		goto end;
-	}
-	
-	if(password != NULL) {
-		if (!(pass =(char*) (*env)->GetStringUTFChars(env, password, 0))) {
-			printf("get pemPrikey error \n");
-			goto end;
-		}
-	} 
-	
-	if (!(pkey = PEM_read_bio_PrivateKey(priKeyBio, NULL, NULL, pass))) {
-		printf("PEM_read_bio_PrivateKey error\n");
-		goto end;
-	}
+if (!(keybuf = (*env)->GetStringUTFChars(env, pemPriKey, 0))) {
+    printf("get pemPrikey error\n");
+    goto end;
+}
 
-	BIO *pubKeyBio = BIO_new(BIO_s_mem());
+BIO *priKeyBio = NULL;
 
-	if(!PEM_write_bio_PUBKEY(pubKeyBio, pkey)) {
-		printf("pem_write_bio_pubkey error\n");
-		goto end;
-	}
-	
-	BIO_get_mem_data(pubKeyBio, &outbuf);
+priKeyBio = BIO_new_mem_buf(keybuf,-1);
 
-	if (!(ret = (*env)->NewStringUTF(env, outbuf))) {
-		printf("Error return jstring");
-		goto end;
-	}
+if (priKeyBio == NULL) {
+    printf("turn pemPrikey into BIO error\n");
+    goto end;
+}
+
+if(password != NULL) {
+    if (!(pass =(char*) (*env)->GetStringUTFChars(env, password, 0))) {
+        printf("get pemPrikey error\n");
+        goto end;
+    }
+}
+
+if (!(pkey = PEM_read_bio_PrivateKey(priKeyBio, NULL, NULL, pass))) {
+    printf("PEM_read_bio_PrivateKey error\n");
+    goto end;
+}
+
+BIO *pubKeyBio = BIO_new(BIO_s_mem());
+
+if(!PEM_write_bio_PUBKEY(pubKeyBio, pkey)) {
+    printf("pem_write_bio_pubkey error\n");
+    goto end;
+}
+
+BIO_get_mem_data(pubKeyBio, &outbuf);
+
+if (!(ret = (*env)->NewStringUTF(env, outbuf))) {
+    printf("Error return jstring\n");
+    goto end;
+}
 
 end:
 	
-	if (pkey) EVP_PKEY_free(pkey);
-	if (keybuf) (*env)->ReleaseStringUTFChars(env, pemPriKey, keybuf);
-	if (pass) (*env)->ReleaseStringUTFChars(env, password, pass);
-	if (priKeyBio) BIO_free(priKeyBio);
-	if (pubKeyBio) BIO_free(pubKeyBio);
-
-	return ret;
+if (pkey) EVP_PKEY_free(pkey);
+if (keybuf) (*env)->ReleaseStringUTFChars(env, pemPriKey, keybuf);
+if (pass) (*env)->ReleaseStringUTFChars(env, password, pass);
+if (priKeyBio) BIO_free(priKeyBio);
+if (pubKeyBio) BIO_free(pubKeyBio);
+return ret;
 
 }
 
 JNIEXPORT jbyteArray JNICALL Java_org_gmssl_GmSSL_transPriPemToByteArr(JNIEnv *env, jobject this, jstring pemKey,jstring password) {
-	jbyteArray ret = NULL;
-	const char *keybuf = NULL;
-	char * pass = NULL;
-	unsigned char *outbuf = NULL;
-	EVP_PKEY *pkey =NULL;
-	BIO *keyBio = NULL;
 
-	if (pemKey == NULL) {
-		printf("pemKey can not be null\n");
-		goto end;
-	}
+jbyteArray ret = NULL;
+const char *keybuf = NULL;
+char * pass = NULL;
+unsigned char *outbuf = NULL;
+EVP_PKEY *pkey =NULL;
+BIO *keyBio = NULL;
 
-	if (!(keybuf = (*env)->GetStringUTFChars(env, pemKey, 0))) {
-		printf("get pemKey error \n");
-		goto end;
-	}
-	keyBio = BIO_new_mem_buf(keybuf,-1);
+if (pemKey == NULL) {
+    printf("pemKey can not be null\n");
+    goto end;
+}
 
-	if (!(keyBio = BIO_new_mem_buf(keybuf,-1))) {
-		printf("turn key into BIO error \n");
-		goto end;
-	}
+if (!(keybuf = (*env)->GetStringUTFChars(env, pemKey, 0))) {
+    printf("get pemKey error\n");
+    goto end;
+}
+keyBio = BIO_new_mem_buf(keybuf,-1);
 
-	if (password != NULL) {
-		if (!(pass = (char *)(*env)->GetStringUTFChars(env, password, 0))) {
-			printf("get pass error\n");
-			goto end;
-		}
-	}	
-	
-	if (!(pkey = PEM_read_bio_PrivateKey(keyBio, NULL, NULL, pass))) {
-		printf("PEM_read_bio_PrivateKey() error\n");
-		goto end;
-	}
-	
-	int outlen;
-	if (!(outlen= i2d_PrivateKey(pkey,&outbuf))) {
-		printf("i2d_PrivateKey_bio() error\n");
-		goto end;
-	}
+if (!(keyBio = BIO_new_mem_buf(keybuf,-1))) {
+    printf("turn key into BIO error\n");
+    goto end;
+}
 
-	if (!(ret = (*env)->NewByteArray(env,outlen))) {
-		printf("return jbyteArray error\n");
-		goto end;
-	}
-	
-	(*env)->SetByteArrayRegion(env, ret, 0, outlen, (jbyte *) outbuf);
+if (password != NULL) {
+    if (!(pass = (char *)(*env)->GetStringUTFChars(env, password, 0))) {
+        printf("get pass error\n");
+        goto end;
+    }
+}
+
+if (!(pkey = PEM_read_bio_PrivateKey(keyBio, NULL, NULL, pass))) {
+    printf("PEM_read_bio_PrivateKey() error\n");
+    goto end;
+}
+
+int outlen;
+if (!(outlen= i2d_PrivateKey(pkey,&outbuf))) {
+    printf("i2d_PrivateKey_bio() error\n");
+    goto end;
+}
+
+if (!(ret = (*env)->NewByteArray(env,outlen))) {
+    printf("return jbyteArray error\n");
+    goto end;
+}
+
+(*env)->SetByteArrayRegion(env, ret, 0, outlen, (jbyte *) outbuf);
 
 end:
-	if (pkey) EVP_PKEY_free(pkey);
-	if (keybuf) (*env)->ReleaseStringUTFChars(env, pemKey, keybuf);
-	if (pass) (*env)->ReleaseStringUTFChars(env, password, pass);
-	if (keyBio) BIO_free(keyBio);
-	return ret;
+if (pkey) EVP_PKEY_free(pkey);
+if (keybuf) (*env)->ReleaseStringUTFChars(env, pemKey, keybuf);
+if (pass) (*env)->ReleaseStringUTFChars(env, password, pass);
+if (keyBio) BIO_free(keyBio);
+return ret;
 
 }
 
 JNIEXPORT jbyteArray JNICALL Java_org_gmssl_GmSSL_transPubPemToByteArr(JNIEnv *env, jobject this, jstring pemKey) {
-	jbyteArray ret = NULL;
-	const char *keybuf = NULL;
-	char * pass = NULL;
-	unsigned char *data = NULL;
-	long len;
-	
-	if (pemKey == NULL) {
-		printf("pemKey can not be null\n");
-		goto end;
-	}
-	
-	if (!(keybuf = (*env)->GetStringUTFChars(env, pemKey, 0))) {
-		printf("get pemKey error \n");
-		goto end;
-	}
 
-	BIO *keyBio = BIO_new_mem_buf(keybuf,-1);
-	if (keyBio == NULL) {
-		printf("turn key into BIO error \n");
-		goto end;
-	}
+jbyteArray ret = NULL;
+const char *keybuf = NULL;
+char * pass = NULL;
+unsigned char *data = NULL;
+long len;
 
-	if (!PEM_bytes_read_bio(&data, &len, NULL, PEM_STRING_PUBLIC, keyBio, NULL, pass)) {
-		printf("PEM_bytes_read_bio() error\n");
-		goto end;
-	}
+if (pemKey == NULL) {
+    printf("pemKey can not be null\n");
+    goto end;
+}
 
-	if (!(ret = (*env)->NewByteArray(env,len))) {
-		printf("return jbyteArray error\n");
-		goto end;
-	}
-	
-	(*env)->SetByteArrayRegion(env, ret, 0, len, (jbyte *) data);
+if (!(keybuf = (*env)->GetStringUTFChars(env, pemKey, 0))) {
+    printf("get pemKey error\n");
+    goto end;
+}
+
+BIO *keyBio = BIO_new_mem_buf(keybuf,-1);
+if (keyBio == NULL) {
+    printf("turn key into BIO error\n");
+    goto end;
+}
+
+if (!PEM_bytes_read_bio(&data, &len, NULL, PEM_STRING_PUBLIC, keyBio, NULL, pass)) {
+    printf("PEM_bytes_read_bio() error\n");
+    goto end;
+}
+
+if (!(ret = (*env)->NewByteArray(env,len))) {
+    printf("return jbyteArray error\n");
+    goto end;
+}
+
+(*env)->SetByteArrayRegion(env, ret, 0, len, (jbyte *) data);
 
 end:
-	if (keybuf) (*env)->ReleaseStringUTFChars(env, pemKey, keybuf);
-	if (keyBio) BIO_free(keyBio);
-	return ret;
+if (keybuf) (*env)->ReleaseStringUTFChars(env, pemKey, keybuf);
+if (keyBio) BIO_free(keyBio);
+return ret;
 
 }
 
