@@ -251,6 +251,17 @@ public class GmSSL {
 	}
 
 	static {
-		System.loadLibrary("gmssljni");
+
+		String os = System.getProperty("os.name");
+
+		if (os.contains("Windows 10") || os.contains("windows 10")) {
+			// 加载dll
+			System.loadLibrary("libcrypto-1_1-x64");
+			System.loadLibrary("gmssljni");
+		} else if (os.contains("linux")){
+			// 加载so文件
+			System.loadLibrary("gmssljni");
+		}
+
 	}
 }
