@@ -1,10 +1,14 @@
-本仓库基于gmssl，对java wrapper接口做了一些补充，具体如下：
+一: 本仓库基于gmssl，对java wrapper接口做了一些补充，具体如下：
 1. 补充了生成sm2密钥方法,包含生成DER & PEM两种格式sm2公私钥;
 2. 补充了公钥&私钥PEM转DER格式的方法;
 3. GmSSL.c中简易实现1,2描述中的jni接口;
-4. 简易封装sm2,sm3,sm4,方便直接调用
+4. 简易封装sm2,sm3,sm4,方便直接调用;
 
-linux编译使用说明：
+二: lib包简要说明 
+1. resource/lib目录包含已经编译好的Linux版本的so文件及Windows 10(x64)版本dll文件,  
+   可以导入library直接使用;如果不能使用,可以参考以下编译使用说明进行编译
+
+三: linux编译参考：
 1. 下载gmssl源码,解压至当前工作目录,下载链接  
    https://github.com/guanzhi/GmSSL/archive/master.zip
 2. unzip master.zip
@@ -24,17 +28,9 @@ linux编译使用说明：
     gcc -shared -fPIC -Wall -I./jni -I /home/xxx/GmSSL-master/include -L /home/xxx/GmSSL-master/java GmSSL.c -lcrypto -o libgmssljni.so
 11. java项目library中添加libgmssljni.so或-Djava.library.path="libgmssljni.so所在文件夹路径"
 
-
-
-
-
-
-
-
-
-
-
 Reference:  
 [1]: http://gmssl.org/docs/quickstart.html  
 [2]: https://github.com/guanzhi/GmSSL/issues/1014  
 [3]: https://www.jianshu.com/p/51cb8ff49ce7
+
+四: windows 10编译参考
