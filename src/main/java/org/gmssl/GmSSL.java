@@ -68,17 +68,17 @@ public class GmSSL {
 	public native byte[] digest(String algor, byte[] data);
 	public native String[] getMacLength(String algor);
 	public native byte[] mac(String algor, byte[] data, byte[] key);
-	/*产生sm2私钥,仅支持sm2*/
+	/**产生sm2私钥,仅支持sm2*/
 	public native byte[] generatePrivateKey();
-	/*根据sm2私钥获取sm2公钥*/
+	/**根据sm2私钥获取sm2公钥*/
 	public native byte[] getPublicKey(byte[] privateKey);
-	/*产生PEM格式私钥,algor暂时仅支持sm2*/
+	/**产生PEM格式私钥,algor暂时仅支持sm2*/
 	public native String generatePEMPriKey(String algor,String phrasePass);
-	/*根据sm2私钥获取sm2 PEM格式公钥*/
+	/**根据sm2私钥获取sm2 PEM格式公钥*/
 	public native String getPEMPubKey(String pemPriKey,String phrasePass);
-	/*将PEM格式私钥转成二进制数组,没有密钥加密时传入null*/
+	/**将PEM格式私钥转成二进制数组,没有密钥加密时传入null*/
 	public native byte[] transPriPemToByteArr(String pem,String phrasePass);
-	/*将PEM格式公钥转成二进制数组*/
+	/**将PEM格式公钥转成二进制数组*/
 	public native byte[] transPubPemToByteArr(String pubPem);
 	public native byte[] sign(String algor, byte[] data, byte[] privateKey);
 	public native int verify(String algor, byte[] digest, byte[] signature, byte[] publicKey);

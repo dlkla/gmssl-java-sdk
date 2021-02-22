@@ -17,7 +17,7 @@ public class Sm4 {
 
 	private static final String PARAMETER_ERROR = "参数错误";
 
-	/*类初始化gmssl对象，调用jni接口*/
+	/**类初始化gmssl对象，调用jni接口*/
 	private static final GmSSL gmssl = new GmSSL();
 
 

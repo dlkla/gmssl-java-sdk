@@ -4,16 +4,16 @@ import java.nio.charset.StandardCharsets;
 
 public class Sm2 {
 
-    /*类初始化gmssl对象，调用jni接口*/
+    /**类初始化gmssl对象，调用jni接口*/
     private static final GmSSL gmssl = new GmSSL();
 
-    /*默认对称加密算法*/
+    /**默认对称加密算法*/
     private static final String DEFAULT_SYMMETRIC_ALG = "sms4-cbc";
 
-    /*sm2加密算法*/
+    /**sm2加密算法*/
     private static final String SM2_ENCRYPT_ALG = "sm2encrypt-with-sm3";
 
-    /*sm2签名算法*/
+    /**sm2签名算法*/
     private static final String SM2_SIGN_ALG = "sm2sign";
 
 
